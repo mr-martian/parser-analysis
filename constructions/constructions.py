@@ -125,6 +125,20 @@ Pattern('NP-coord',
             ]
         }, level=1)
 
+Pattern('PP-coord',
+        {
+            'upos': NOUNish,
+            'children': [
+                leaf('ADP', 'case'),
+                {
+                    'upos': NOUNish,
+                    'deprel': 'conj',
+                    'children': [leaf('ADP', 'case')]
+                },
+                leaf('CCONJ', 'cc')
+            ]
+        }, level=1)
+
 Pattern('NP-NP-cop',
         {
             'upos': NOUNish,
@@ -193,7 +207,7 @@ Pattern('VP-coord',
 
 Pattern('NP-PP',
         {
-            'upos': 'NOUN',
+            'upos': NOUNish,
             'children': [
                 {
                     'upos': 'NOUN',
@@ -265,6 +279,7 @@ Pattern('Elided-Coord-Verb',
             ]
         }, level=1)
 
+# TODO: doesn't account for NUM as head of NP coordinated with other NP
 Pattern('Complex-Numeral',
         {
             'upos': 'NUM',
@@ -302,10 +317,22 @@ Pattern('Title',
             'children': [leaf('NOUN', 'appos')]
         }, level=1)
 
+Pattern('Title',
+        {
+            'upos': 'NOUN',
+            'children': [leaf('PROPN', 'flat')]
+        }, level=1)
+
 Pattern('Quantified-noun',
         {
             'upos': 'NOUN',
             'children': [leaf('NUM', 'nummod')]
+        }, level=1)
+
+Pattern('Quantified-noun',
+        {
+            'upos': 'NOUN',
+            'children': [{'upos': 'ADJ', 'deprel': 'amod', 'NumType': 'Ord'}],
         }, level=1)
 
 Pattern('Nominal-acl',
@@ -337,3 +364,137 @@ Pattern('Maybe-resumptive-subject',
                 {'deprel': 'dislocated', 'side': 'left'}
             ]
         }, level=1) #TODO: maybe level2
+
+Pattern('Controlled-subj',
+        {
+            'children': [
+                NOUNsubj,
+                {
+                    'deprel': 'xcomp',
+                    'not': [{'children': [NOUNsubj]}]
+                }
+            ]
+        }, level=1)
+
+Pattern('Predicate-adj',
+        {
+            'upos': 'ADJ',
+            'children': [
+                NOUNsubj,
+                leaf('AUX', 'cop')
+            ]
+        }, level=1)
+
+Pattern('NUM-of-the-NOUN',
+        {
+            'upos': 'NUM',
+            'children': [
+                {
+                    'upos': 'NOUN',
+                    'deprel': 'nmod',
+                    'children': [leaf('ADP', 'case'), leaf('DET', 'det')]
+                }
+            ]
+        }, level=1)
+
+Pattern('NUM-of-the-NOUN',
+        {
+            'upos': 'NUM',
+            'children': [
+                {
+                    'upos': 'NOUN',
+                    'deprel': 'nmod',
+                    'children': [leaf('DET', 'det')]
+                }
+            ]
+        }, level=1)
+
+Pattern('NUM-of-the-NOUN',
+        {
+            'upos': 'NUM',
+            'children': [
+                {
+                    'upos': NOUNish,
+                    'deprel': 'nmod',
+                    'children': [leaf('ADP', 'case')]
+                }
+            ]
+        }, level=1)
+
+Pattern('NUM-of-the-NOUN',
+        {
+            'upos': 'NUM',
+            'children': [leaf('NOUN', 'nmod')]
+        }, level=1)
+
+Pattern('Clause-nesting',
+        {
+            'children': [
+                {
+                    'deprel': ['xcomp', 'ccomp', 'advcl', 'acl', 'csubj'],
+                    'children': [
+                        {'deprel': ['xcomp', 'ccomp', 'advcl', 'acl', 'csubj']}
+                    ]
+                }
+            ]
+        }, level=1)
+
+Pattern('Poss-PRON',
+        {
+            'upos': 'NOUN',
+            'children': [leaf('PRON', 'nmod:poss')]
+        }, level=1)
+
+Pattern('NP-bracketing',
+        {
+            'upos': NOUNish,
+            'children': [
+                leaf(NOUNish, 'nmod'),
+                leaf(NOUNish, 'nmod')
+            ]
+        }, level=1)
+
+Pattern('NP-bracketing',
+        {
+            'upos': NOUNish,
+            'children': [
+                {
+                    'upos': NOUNish,
+                    'deprel': 'nmod',
+                    'children': [leaf(NOUNish, 'nmod')]
+                }
+            ]
+        }, level=1)
+
+Pattern('Complex-AdjP',
+        {
+            'upos': 'ADJ',
+            'deprel': ['amod', 'advmod'],
+            'children': [{'deprel': ['obl', 'nmod']}]
+        }, level=1)
+
+Pattern('Shared-ADP',
+        {
+            'upos': NOUNish,
+            'children': [
+                leaf('ADP', 'case'),
+                {
+                    'upos': NOUNish,
+                    'deprel': 'conj',
+                    'not': [{'children': [leaf('ADP', 'case')]}]
+                }
+            ]
+        }, level=1)
+
+Pattern('Shared-subj',
+        {
+            'upos': 'VERB',
+            'children': [
+                leaf(NOUNish, 'nsubj'),
+                {
+                    'upos': 'VERB',
+                    'deprel': 'conj',
+                    'not': [{'children': [leaf(NOUNish, 'nsubj')]}]
+                }
+            ]
+        }, level=1)
