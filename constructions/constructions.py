@@ -210,7 +210,7 @@ Pattern('NP-PP',
             'upos': NOUNish,
             'children': [
                 {
-                    'upos': 'NOUN',
+                    'upos': NOUNish,
                     'deprel': 'nmod',
                     'children': [leaf('ADP', 'case')]
                 }
@@ -286,7 +286,7 @@ Pattern('Complex-Numeral',
             'children': [
                 {
                     'upos': 'NUM',
-                    'deprel': ['flat', 'conj']
+                    'deprel': ['flat', 'conj', 'compound']
                 }
             ]
         }, level=1)
@@ -332,7 +332,9 @@ Pattern('Quantified-noun',
 Pattern('Quantified-noun',
         {
             'upos': 'NOUN',
-            'children': [{'upos': 'ADJ', 'deprel': 'amod', 'NumType': 'Ord'}],
+            'children': [
+                {'upos': ['ADJ', 'NUM'], 'deprel': 'amod', 'NumType': 'Ord'}
+            ],
         }, level=1)
 
 Pattern('Nominal-acl',
@@ -373,6 +375,14 @@ Pattern('Controlled-subj',
                     'deprel': 'xcomp',
                     'not': [{'children': [NOUNsubj]}]
                 }
+            ]
+        }, level=1)
+
+Pattern('Raised-subj',
+        {
+            'children': [
+                leaf(NOUNish, 'obj'),
+                {'deprel': 'xcomp', 'not': [{'children': [NOUNsubj]}]}
             ]
         }, level=1)
 
@@ -427,15 +437,23 @@ Pattern('NUM-of-the-NOUN',
             'children': [leaf('NOUN', 'nmod')]
         }, level=1)
 
-Pattern('Clause-nesting',
+clause_dep = ['xcomp', 'ccomp', 'advcl', 'acl', 'csubj']
+
+Pattern('Clause-bracketing',
         {
             'children': [
                 {
-                    'deprel': ['xcomp', 'ccomp', 'advcl', 'acl', 'csubj'],
-                    'children': [
-                        {'deprel': ['xcomp', 'ccomp', 'advcl', 'acl', 'csubj']}
-                    ]
+                    'deprel': clause_dep,
+                    'children': [{'deprel': clause_dep}]
                 }
+            ]
+        }, level=1)
+
+Pattern('Clause-bracketing',
+        {
+            'children': [
+                {'deprel': clause_dep},
+                {'deprel': clause_dep}
             ]
         }, level=1)
 
@@ -495,6 +513,37 @@ Pattern('Shared-subj',
                     'upos': 'VERB',
                     'deprel': 'conj',
                     'not': [{'children': [leaf(NOUNish, 'nsubj')]}]
+                }
+            ]
+        }, level=1)
+
+Pattern('Subordinated-clause',
+        {
+            'upos': 'VERB',
+            'children': [
+                {
+                    'upos': 'VERB',
+                    'deprel': ['advcl', 'ccomp'],
+                    'children': [leaf('SCONJ', 'mark')]
+                }
+            ]
+        }, level=1)
+
+Pattern('Long-name',
+        {
+            'upos': 'PROPN',
+            'children': [leaf('PROPN', 'flat'), leaf('PROPN', 'flat')]
+        }, level=1)
+
+Pattern('Name-list',
+        {
+            'upos': 'PROPN',
+            'children': [
+                leaf('PROPN', 'flat'),
+                {
+                    'upos': 'PROPN',
+                    'deprel': ['conj', 'parataxis'],
+                    'children': [leaf('PROPN', 'flat')]
                 }
             ]
         }, level=1)
