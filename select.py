@@ -5,6 +5,7 @@ import sys, argparse
 parser = argparse.ArgumentParser('Select sentences from a treebank containing particular constructions')
 parser.add_argument('in_treebank', action='store')
 parser.add_argument('out_treebank', action='store')
+parser.add_argument('-s', '--skip', type=int, default=0)
 parser.add_argument('-c', '--count', type=int, default=100)
 args = parser.parse_args()
 
@@ -35,10 +36,14 @@ cons = set()
 for l in sys.stdin().readlines():
     cons.add(l.strip())
 
+skip = 0
 count = 0
 with open(args.in_treebank) as fin:
     with open(args.out_treebank, 'w') as fout:
         for block in read_blocks(fin):
+            if skip < args.skip:
+                skip += 1
+                continue
             # TODO: balanced selection of constructions?
             if len(cons) == 0 or not cons.isdisjoint(get_constructions(block)):
                 fout.write(block + '\n\n')
