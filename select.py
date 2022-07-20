@@ -33,7 +33,7 @@ def get_constructions(block):
     return ret
 
 cons = set()
-for l in sys.stdin().readlines():
+for l in sys.stdin.readlines():
     cons.add(l.strip())
 
 skip = 0
